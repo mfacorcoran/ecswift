@@ -9,8 +9,9 @@ mkdir work/00000000000/xsel work/00000000000/xspec
 cd work/00000000000/xsel
 #ln -nfs `ls ../sw*xwtw2po_cl.evt` .
 ln -nfs `ls ../sw*po_cl.evt` .
+echo "linking cleaned event file"
+ls ../sw*po_cl.evt
 cp /Users/corcoran/Dropbox/Eta_Car/swift/quicklook/templates/*reg .
-
 cd ../xspec
 cp /Users/corcoran/Dropbox/Eta_Car/swift/quicklook/templates/ec*xcm .
 
