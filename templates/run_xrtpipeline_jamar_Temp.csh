@@ -11,9 +11,11 @@ cd work/00000000000/xsel
 ln -nfs `ls ../sw*po_cl.evt` .
 echo "linking cleaned event file"
 ls ../sw*po_cl.evt
-cp /Users/corcoran/Dropbox/Eta_Car/swift/quicklook/templates/*reg .
+#cp /Users/corcoran/Dropbox/Eta_Car/swift/quicklook/templates/*reg .
+cp TEMPLATEDIR/*reg .
 cd ../xspec
-cp /Users/corcoran/Dropbox/Eta_Car/swift/quicklook/templates/ec*xcm .
+#cp /Users/corcoran/Dropbox/Eta_Car/swift/quicklook/templates/ec*xcm .
+cp TEMPLATEDIR/ec*xcm .
 
 cd ../../..
 #
