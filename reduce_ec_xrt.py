@@ -106,7 +106,10 @@ def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklo
     # In[199]:
     
     #Given:
-    src5 = TemplateDirectory+"/mk_xrt_arfs_jamar_Temp.csh" #Location of XRT make arf file Template
+    if pcmode:
+        src5 = TemplateDirectory+"/mk_xrt_arfs_jamar_Temp_pc.csh" #Location of XRT make arf file Template
+    else:
+        src5 = TemplateDirectory+"/mk_xrt_arfs_jamar_Temp.csh" #Location of XRT make arf file Template
     dst5 = XspectDir+"/mk_xrt_arfs_jamar.csh" #Duplicate template
     #shutil.copy2(src5, dst5)
     ARF = "mk_xrt_arfs_jamar.csh" #name of file to edit
