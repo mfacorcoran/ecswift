@@ -53,8 +53,8 @@ def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklo
     
     XselectDir = ProcDir+"/work/"+obsid+"/xsel/"
     os.chdir(XselectDir)
-    src2 = TemplateDirectory+"/run_xselect_Temp.xco" #Location of XRT pipeline Template
-    dst2 = XselectDir+"/run_xselect.xco"#new destination for the XRT pipeline file
+    # src2 = TemplateDirectory+"/run_xselect_Temp.xco" #Location of XRT pipeline Template
+    # dst2 = XselectDir+"/run_xselect.xco"#new destination for the XRT pipeline file
     src3 = TemplateDirectory+"/run_xselect_Temp2.xco"
     dst3 = XselectDir+"/run_xselect2.xco"
     
