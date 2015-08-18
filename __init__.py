@@ -8,3 +8,4 @@ from fit_ecsrcbin10 import get_obsid_flux
 from reduce_ec_xrt import reduce_ec_xrt
 from untar_ecswift import untar_ecswift
 from write_xcmfile import write_xcmfile
+from utils import create_xrtmkarf_script

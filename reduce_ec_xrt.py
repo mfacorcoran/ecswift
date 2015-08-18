@@ -1,4 +1,5 @@
-def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklook', TemplateDirectory='/Users/corcoran/Dropbox/Eta_Car/swift/quicklook/templates', pcmode=False):
+def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklook',
+                  TemplateDirectory='/Users/corcoran/Dropbox/Eta_Car/swift/quicklook/templates', pcmode=False):
     """
     For a given obsid, this routine runs 
       1) runs xrt pipeline on the downloaded data (in the ProcDir directory) and outputs to the work directory
@@ -16,9 +17,13 @@ def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklo
       changes:
       20150818 MFC added flag for analysis of pcmode data (and created associated template file)
      """
-    import os, sys, subprocess,glob , shutil, pyfits, urllib, tarfile
-    #from pprint import pprint ##allows you to print listings
-    # import fit_ecsrcbin10
+    import os
+    import glob
+    import shutil
+    import pyfits
+    import urllib
+    from ecswift.utils import create_xrtmkarf_script
+
     obsid = obsid.strip()
     WorkDir = ProcDir+"/work"
     print "Writing Output to %s" % WorkDir
@@ -34,16 +39,15 @@ def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklo
         
     ### Run XRT Pipeline
     
-    os.chdir(ProcDir) # changes Directory 
-    #Filename = TarFilename[2:13] #collects the ObsID
+    os.chdir(ProcDir) # changes Directory
+
     src1 = TemplateDirectory+"/run_xrtpipeline_jamar_Temp.csh" # Location of XRT pipeline Template
     XRT =  ProcDir+"/run_xrtpipeline_"+obsid+".csh"   #name of file to edit
     print "CREATING Processing Script %s" % XRT
     shutil.copy2(src1, XRT)
-    LASTKNOWN ="00000000000"#change file name from
-    CURRENT = obsid  
+    dummyobsid ="00000000000"#change file name from
     text = open(XRT).read() #open the file as a text file
-    open(XRT, "w").write(text.replace(LASTKNOWN, CURRENT)) #replace the LASTKNOWN with the CURRENT obs ID
+    open(XRT, "w").write(text.replace(dummyobsid, obsid).replace('TEMPLATEDIR', TemplateDirectory)) #replace the LASTKNOWN with the CURRENT obs ID
     print "Running XRT pipeline on "+ obsid
     print os.getcwd()
     os.system("source "+ XRT) #run XRT pipline script
@@ -70,7 +74,7 @@ def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklo
     tt = open(TemplateDirectory+"/"+XSELECTemp,"r") #opens xselect template command file 
     a=tt.read()
     tt.close()
-    b=a.replace("DESIREDDIRECTORY",ProcDir).replace("OBSID",CURRENT)
+    b=a.replace("DESIREDDIRECTORY",ProcDir).replace("OBSID",obsid)
     xco=open(XselectDir+XSELECT,"w")
     xco.write(b)
     xco.close()
@@ -82,15 +86,15 @@ def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklo
     os.system(cmd) #Runs Xselect command file opened terminal window
     
     
-    #### Copy/Group pha files
-    
-    # In[152]:
-    
-    #Given:
+
+    """
+    change to xspec directory
+    """
     XspectDir = ProcDir+"/work/"+obsid+"/xspec/" #specifies the location of the Xspec directory
-    #Required: copy pha files into xspec directory.
-    #Solution:
     os.chdir(XselectDir)# Changed directory to the Xselect directory
+
+    #### Copy/Group pha files
+
     for file in glob.glob("*.pha"): #Locates all the files in the current direcotry with the .pha extension
         PhaFilename = file #set the file name to PhaFilename
         src4 = XselectDir+PhaFilename
@@ -102,71 +106,23 @@ def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklo
     
     
     #### Make Ancillary response Files
-    
-    # In[199]:
-    
-    #Given:
-    if pcmode:
-        src5 = TemplateDirectory+"/mk_xrt_arfs_jamar_Temp_pc.csh" #Location of XRT make arf file Template
-    else:
-        src5 = TemplateDirectory+"/mk_xrt_arfs_jamar_Temp.csh" #Location of XRT make arf file Template
-    dst5 = XspectDir+"/mk_xrt_arfs_jamar.csh" #Duplicate template
-    #shutil.copy2(src5, dst5)
-    ARF = "mk_xrt_arfs_jamar.csh" #name of file to edit
-    
-    #Required: Replace all the numbers in the text, Run XRT Pipeline,
-    #solution:
-    
-    tt = open(src5,"r") #opens xselect template command file 
-    a=tt.read()
-    tt.close()
-    b=a.replace("DESIREDDIRECTORY",ProcDir).replace("OBSID",CURRENT)
-    arf=open(dst5,"w")
-    arf.write(b)
-    arf.close()
-    
-    os.system("source "+ dst5) #make Ancillary Response File. 
+
+    marf_script = create_xrtmkarf_script(obsid, XspectDir, ProcDir=ProcDir, pcmode=pcmode)
+    os.system("source "+ marf_script) #make Ancillary Response File.
     
     
     #### Locate the Response file
-    
-    # In[8]:
-     
-    os.chdir(XspectDir) 
-    
+
+
     hdulist = pyfits.open('ec_srcbin10.arf') #open the Fits file.
-    #hdulist.info() #show the information in the fits file
-    #hdulist[1].header['RESPFILE'] #open the header file and locate the response file.
     Response = hdulist[1].header['RESPFILE']
     hdulist.close()
-    #CALDB=os.environ['CALDB']
-    #src6 = CALDB+'/data/swift/xrt/cpf/rmf/'
-    #shutil.copy2(src6+Response, XspectDir+Response)
-    
+
     print "Getting rmf file %s from remote CALDB" % Response
     swiftrmf="http://heasarc.gsfc.nasa.gov/FTP/caldb/data/swift/xrt/cpf/rmf"
     urllib.urlretrieve(swiftrmf+"/"+Response,XspectDir+"/"+Response)
     
-#    # fit the spectrum
-#    
-#    ecwift.fit_ecsrcbin10(obsid, workdir=WorkDir)
-#    
-# In[115]:
-    
-#   #Given:
-#   src7 = TemplateDirectory+"/ec_srcbin10all.xcm" #Location of XRT make arf file Template
-#   dst7 = XspectDir+"/ec_srcbin10.xcm" #Duplicate template
-#   #shutil.copy2(src7, dst7)
-#   TempResponse = "swxwt00000000000.rmf"
-#   
-#   tt = open(src7,"r") #opens xselect template command file 
-#   a=tt.read()
-#   tt.close()
-#   #b=a.replace(TempResponse,src6+Response)
-#   b=a.replace(TempResponse,XspectDir+"/"+Response)
-#   rmf=open(dst7,"w")
-#   rmf.write(b)
-#   rmf.close()
+
     return
     
     
