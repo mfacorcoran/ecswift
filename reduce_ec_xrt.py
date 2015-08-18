@@ -46,8 +46,16 @@ def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklo
     print "CREATING Processing Script %s" % XRT
     shutil.copy2(src1, XRT)
     dummyobsid ="00000000000"#change file name from
+    if not pcmode:
+        sregfile = "ec_src.reg"
+        bregfile = "ec_bkg.reg"
+    else:
+        sregfile = "ec_src_pc.reg"
+        bregfile = "ec_src_pc.reg"
     text = open(XRT).read() #open the file as a text file
-    open(XRT, "w").write(text.replace(dummyobsid, obsid).replace('TEMPLATEDIR', TemplateDirectory)) #replace the LASTKNOWN with the CURRENT obs ID
+    b=text.replace(dummyobsid, obsid).replace('TEMPLATEDIR', TemplateDirectory)
+    b=b.replace("SRCREG",sregfile).replace("BKGREG",bregfile)
+    open(XRT, "w").write(b)
     print "Running XRT pipeline on "+ obsid
     print os.getcwd()
     os.system("source "+ XRT) #run XRT pipline script
