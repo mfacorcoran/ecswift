@@ -1,0 +1,9 @@
+filter region ec_src.reg
+extract spectrum
+save spectrum ec_src
+clear region all
+filter region ec_bkg.reg
+extract spectrum
+save spectrum ec_bkg
+exit
+no
