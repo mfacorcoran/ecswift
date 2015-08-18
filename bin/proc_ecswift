@@ -1,5 +1,11 @@
 #! /usr/bin/env python
 
+"""
+CHANGES:
+20150818 MFC Changed default template directory
+
+"""
+
 def check_response(question):
     resp = raw_input(question+" [y]/n :") or "y"
     if resp.strip().lower()[0] == "y":
@@ -19,7 +25,7 @@ if __name__ == "__main__":
     parser.add_argument("obsid", type=str, help="Swift XRT obsid to process")
     parser.add_argument("-ql", "--quicklook", help="Process Quicklook data instead of archived data (Default is Final Processing)", action="store_true")
     parser.add_argument("--rmfdir", help="rmf directory", type=str, default="/caldb/data/swift/xrt/cpf/rmf")
-    parser.add_argument("--TemplateDir", help="Template Directory for xselect scripts", type=str, default="/Users/corcoran/Dropbox/Eta_Car/swift/quicklook/templates")
+    parser.add_argument("--TemplateDir", help="Template Directory for xselect scripts", type=str, default="/software/github/ecswift/templates")
     parser.add_argument("--ProcDir", help="Directory where Processed data is located", type=str, default="")
     parser.add_argument("--tardir", help="Directory where the quicklook tar file is located", type=str, default="/Users/corcoran/Downloads")
     parser.add_argument("--clobber", help="overwrite output directory", action="store_true")
