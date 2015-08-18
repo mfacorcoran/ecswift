@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser.add_argument("--tardir", help="Directory where the quicklook tar file is located", type=str, default="/Users/corcoran/Downloads")
     parser.add_argument("--clobber", help="overwrite output directory", action="store_true")
     parser.add_argument("--update", help="update existing data with new version", action="store_true")
-    parser.add_argument("--pcmode", help="photon counting mode data",action="store_false")
+    parser.add_argument("--pcmode", help="photon counting mode data (otherwise WT assumed)",action="store_false")
     args=parser.parse_args()
     obsid=args.obsid
     clobber=args.clobber

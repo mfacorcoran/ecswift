@@ -12,6 +12,9 @@ def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklo
       xrtpipeline outputs to ProcDir/work/obsid
       xsel is run in ProcDir/work/obsid/xsel
       xspec is run in ProcDir/work/obsid/xspec
+
+      changes:
+      20150818 MFC added flag for analysis of pcmode data (and created associated template file)
      """
     import os, sys, subprocess,glob , shutil, pyfits, urllib, tarfile
     #from pprint import pprint ##allows you to print listings
