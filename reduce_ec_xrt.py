@@ -51,7 +51,7 @@ def reduce_ec_xrt(obsid,ProcDir = '/Users/corcoran/Dropbox/Eta_Car/swift/quicklo
         bregfile = "ec_bkg.reg"
     else:
         sregfile = "ec_src_pc.reg"
-        bregfile = "ec_src_pc.reg"
+        bregfile = "ec_bkg_pc.reg"
     text = open(XRT).read() #open the file as a text file
     b=text.replace(dummyobsid, obsid).replace('TEMPLATEDIR', TemplateDirectory)
     b=b.replace("SRCREG",sregfile).replace("BKGREG",bregfile)
